@@ -6,7 +6,7 @@ Useful for user-selectable table dimensions and other things.
 
 ## Example Usage
 
-See (example)[example.html] for a better example.
+See [example.html](example.html) for a better example.
 
 Markup:
 
