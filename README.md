@@ -3,6 +3,8 @@
 Acts a a form input that allows a user to select an arbitrary grid size.
 Useful for user-selectable table dimensions and other things.
 
+This evolved from an earlier [fiddle](http://jsfiddle.net/flushot/8p8h6bzw/) I created.
+
 
 ## Example Usage
 
