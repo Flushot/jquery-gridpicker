@@ -1,0 +1,35 @@
+/* Component style */
+
+.grid-picker-area {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: rgb(176, 176, 176) solid 1px;
+    font-size: .75em;
+
+    /* Disable text selection */
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+    .grid-picker-area .grid-cell {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        color: rgb(113, 113, 113);
+        background-color: #eee;
+        cursor: pointer;
+    }
+        .grid-picker-area .grid-cell:hover {
+            color: #fff;
+            background-color: rgb(189, 189, 216);
+        }
+        .grid-picker-area .grid-cell.selected {
+            color: #eee;
+            background-color: rgb(49, 49, 84);
+        }

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>GridPicker Example</title>
+
+	<link rel="stylesheet" href="gridpicker.css"/>
+	<style>
+		#grid-picker {
+	    	font-family: 'Segoe UI', Verdana, Arial, Helvetica, sans-serif;
+		}
+	</style>
+
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="jquery.gridpicker.js"></script>
+	<script>
+		$(function() {
+			$('#grid-picker')
+			    .gridpicker({
+			        cols: 5,
+			        rows: 4,
+			        defaultRow: 2,
+			        defaultCol: 3
+			    })
+			    .on('change', function(evt, row, col) {
+			        $('#selection-result').html(
+			            'Selected: <strong>' + row + '&times;' + col + '</strong>');
+			    });
+
+		})
+	</script>
+
+</head>
+<body>
+
+	<h1>GridPicker Example</h1>
+
+	<div id="grid-picker"></div>
+
+	<br/>
+	<div id="selection-result"></div>
+
+</body>
+</html>
