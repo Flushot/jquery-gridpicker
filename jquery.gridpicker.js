@@ -1,102 +1,116 @@
 /**
  * jQuery Grid Picker plugin
  *
- * @version 1.0
+ * @version 1.0.0
  * @author Chris Lyon <flushot@gmail.com>
  */
 (function($) {
 
     /**
+     * Create a grid picker component
+     *
      * @param [options.cols] number of columns
      * @param [options.rows] number of rows
      * @param [options.cellSize] size of each cell (in pixels)
      */
     $.fn.gridpicker = function(options) {
-        var grid = this,
-            component = this,
-            options = $.extend({
-                name: this.data('name'),
-                rows: this.data('rows') || 5,
-                cols: this.data('cols') || 5,
-                defaultRow: this.data('default-row'),
-                defaultCol: this.data('default-col'),
-                cellSize: this.data('cell-size') || 40,
-                valueTransformer: function(row, col) {
-                    return row + ',' + col;
-                }
-            }, options),
-            row, col, cell;
-        
-        var gridArea = grid.find('.grid-picker-area');
-        if (gridArea.length === 0) {
-            gridArea = $('<div class="grid-picker-area"/>');
-            grid.append(gridArea);
-        }
+        $.each($(this), function() {
+            var grid = $(this), row, col, cell,
+                // Options and defaults
+                opts = $.extend({
+                    name: grid.data('name'),
+                    rows: grid.data('rows') || 5,
+                    cols: grid.data('cols') || 5,
+                    defaultRow: grid.data('default-row'),
+                    defaultCol: grid.data('default-col'),
+                    cellSize: grid.data('cell-size') || 40,
+                    valueTransformer: function(row, col) {
+                        return row + ',' + col;
+                    }
+                }, options);
 
-        var hiddenEl = $('<input type="hidden" value=""/>');
-        if (options.name)
-            hiddenEl.attr('name', options.name);
-        grid.append(hiddenEl);
-        
-        grid.css({
-            width: (options.cols * options.cellSize) + 'px',
-            height: (options.rows * options.cellSize) + 'px'
-        });
-        
-        grid._value = { row: null, col: null };
-        grid.val = function() {
-            return grid._value;
-        };
-        
-        var refreshSelection = function(row, col) {
-            // Select all relevant cells between 1x1 this
-            gridArea.find('.grid-cell').each(function() {
-                var otherCell = $(this),
-                    isSelected = otherCell.hasClass('selected');
-                if (otherCell.data('row') <= row && 
-                    otherCell.data('col') <= col) {
-                    if (!isSelected)
-                        otherCell.addClass('selected');
-                }
-                else if (isSelected) {
-                    otherCell.removeClass('selected');
-                }
+            // Create grid area
+            var gridArea = grid.find('.grid-picker-area');
+            if (gridArea.length === 0) {
+                gridArea = $('<div class="grid-picker-area"/>');
+                grid.append(gridArea);
+            }
+
+            // Create hidden form field
+            var hiddenEl = $('<input type="hidden" value=""/>');
+            if (opts.name)
+                hiddenEl.attr('name', opts.name);
+            grid.append(hiddenEl);
+            
+            // Size the grid
+            grid.css({
+                width: (opts.cols * opts.cellSize) + 'px',
+                height: (opts.rows * opts.cellSize) + 'px'
             });
             
-            // Trigger change event
-            hiddenEl.val(options.valueTransformer(row, col));
-        };
+            /**
+             * Select all relevant cells between 1x1 this
+             *
+             * @param row the row to select
+             * @param the column to select
+             */
+            var refreshSelection = function(row, col) {
+                gridArea.find('.grid-cell').each(function() {
+                    var otherCell = $(this),
+                        isSelected = otherCell.hasClass('selected');
+                    if (otherCell.data('row') <= row && 
+                        otherCell.data('col') <= col) {
+                        if (!isSelected)
+                            otherCell.addClass('selected');
+                    }
+                    else if (isSelected) {
+                        otherCell.removeClass('selected');
+                    }
+                });
+                
+                // Trigger change event
+                hiddenEl.val(opts.valueTransformer(row, col));
+            };
 
-        var onCellClicked = function(cell) {
-            var row = cell.data('row'),
-                col = cell.data('col');
+            /**
+             * Grid cell was clicked
+             *
+             * @param cell the cell element that was clicked
+             */
+            var onCellClicked = function(cell) {
+                var row = cell.data('row'),
+                    col = cell.data('col');
+                
+                refreshSelection(row, col);
+                grid.trigger('change', [row, col]);
+            };
             
-            refreshSelection(row, col);
-            grid.trigger('change', [row, col]);
-        };
-        
-        for (row = 1; row <= options.rows; ++row) {
-            for (col = 1; col <= options.cols; ++col) {
-                cell = $('<div/>')
-                    .addClass('grid-cell')
-                    .data('row', row)
-                    .data('col', col)
-                    .css({
-                        'line-height': options.cellSize + 'px',
-                        width: options.cellSize + 'px',
-                        height: options.cellSize + 'px'
-                    })
-                    .html('<span>' + row + '&times;' + col + '</span>');
+            // Create cells
+            for (row = 1; row <= opts.rows; ++row) {
+                for (col = 1; col <= opts.cols; ++col) {
+                    cell = $('<div/>')
+                        .addClass('grid-cell')
+                        .data('row', row)
+                        .data('col', col)
+                        .css({
+                            'line-height': opts.cellSize + 'px',
+                            width: opts.cellSize + 'px',
+                            height: opts.cellSize + 'px'
+                        })
+                        .html('<span>' + row + '&times;' + col + '</span>');
 
-                cell.click(onCellClicked.bind(component, cell));
-                gridArea.append(cell);
+                    cell.click(onCellClicked.bind(grid, cell));
+                    gridArea.append(cell);
+                }
             }
-        }
 
-        if (options.defaultRow && options.defaultCol)
-            refreshSelection(options.defaultRow, options.defaultCol);
+            // Set default selection
+            if (opts.defaultRow && opts.defaultCol)
+                refreshSelection(opts.defaultRow, opts.defaultCol);
 
-        return grid;
+        });
+
+        return this;
     };
 
 })(jQuery);
